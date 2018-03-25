@@ -10,9 +10,11 @@ import './App.css';
 class App extends Component {
   constructor(props) {
     super(props);
+    const year = 2018;
 
     this.state = {
-      months: this.getMonths()
+      year,
+      months: this.getMonths(year)
     };
   }
 
@@ -22,9 +24,13 @@ class App extends Component {
         <PopupsContainer show={this.state.show} close={() => this.closePopup()}/>
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
+          <h1 className="App-title">{this.state.year}</h1>
         </header>
-        <Calendar {...this.state} showPopup={() => this.showPopup()}/>
+        <div className="body">
+          <button className="prev-button" onClick={() => this.goBack()}>Prev</button>
+          <Calendar {...this.state} showPopup={() => this.showPopup()}/>
+          <button className="next-button" onClick={() => this.goForward()}>Next</button>
+        </div>
       </div>
     );
   }
@@ -37,6 +43,17 @@ class App extends Component {
     this.setState({show: false})
   }
 
+  goBack() {
+    const year = this.state.year - 1;
+    this.setState({year, months: this.getMonths(year)});
+  }
+
+  goForward() {
+    const year = this.state.year + 1;
+
+    this.setState({year, months: this.getMonths(year)});
+  }
+
   /****************************************************************************
   * State initiation
   ****************************************************************************/
@@ -44,13 +61,35 @@ class App extends Component {
     return moment().month(monthNum).format('MMM')
   };
 
-  getMonths = () => {
+  getMonths = (year) => {
     const months = new Array(12).fill(1);
-    return months.map((_, ind) => ({name: this.getMonthName(ind), days: this.getMonthDays(ind).map(this.mapDay)}));
+    const getForYear = this.getMonthDays(year);
+    const shiftForViewYear = this.shiftForView(year);
+
+    return months.map((_, ind) => ({
+      name: this.getMonthName(ind),
+      days: shiftForViewYear(ind)(getForYear(ind).map(this.mapDay))
+      // days: getForYear(ind).map(this.mapDay)
+    }));
   };
 
-  getMonthDays = (monthNum) => {
-    const month = moment().month(monthNum);
+  shiftForView = (year) => (monthNum) => (days) => {
+    const totalCells = 42; // 6 rows of 7 days
+
+    const month = moment().year(year).month(monthNum);
+    const start = month.clone().startOf('month').weekday();
+    const lengthInDays = month.clone().daysInMonth();
+
+    const prefix = start;
+    const postfix = totalCells - (prefix + lengthInDays);
+
+    return new Array(prefix).fill({})
+      .concat(days)
+      .concat(new Array(postfix).fill({}));
+  }
+
+  getMonthDays = (year) => (monthNum) => {
+    const month = moment().year(year).month(monthNum);
 
     const start = month.clone().startOf('month');
     const lengthInDays = month.clone().daysInMonth();
