@@ -1,0 +1,10 @@
+.popup {
+    position: relative;
+    margin: auto;
+    background-color: white;
+}
+
+.popup .close {
+    float: right;
+    cursor: pointer;
+}
