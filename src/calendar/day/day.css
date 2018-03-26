@@ -1,4 +1,5 @@
-.day {
+.day,
+.empty-day {
     cursor: pointer;
     width: 14.2857143%;
     height: 25px;

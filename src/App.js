@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import * as moment from 'moment';
 
 import { Calendar } from './calendar';
-import { PopupsContainer } from './shared/popups-container';
+import { PopupsContainer } from './popups-container';
 
 import logo from './logo.svg';
 import './App.css';
@@ -14,29 +14,30 @@ class App extends Component {
 
     this.state = {
       year,
-      months: this.getMonths(year)
+      months: this.getMonths(year),
+      openUniqueKey: undefined,
     };
   }
 
   render() {
     return (
       <div className="App">
-        <PopupsContainer show={this.state.show} close={() => this.closePopup()}/>
+        <PopupsContainer show={this.state.show} close={() => this.closePopup()} save={(x) => this.save(x)} model={{uniqueKey: this.state.openUniqueKey}}/>
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">{this.state.year}</h1>
         </header>
         <div className="body">
           <button className="prev-button" onClick={() => this.goBack()}>Prev</button>
-          <Calendar {...this.state} showPopup={() => this.showPopup()}/>
+          <Calendar {...this.state} showPopup={(x) => this.showPopup(x)}/>
           <button className="next-button" onClick={() => this.goForward()}>Next</button>
         </div>
       </div>
     );
   }
 
-  showPopup() {
-    this.setState({show: true})
+  showPopup(model: {uniqueKey: string}) {
+    this.setState({show: true, openUniqueKey: model.uniqueKey})
   }
 
   closePopup() {
@@ -54,8 +55,17 @@ class App extends Component {
     this.setState({year, months: this.getMonths(year)});
   }
 
+  save(x) {
+    console.log(`X: ${JSON.stringify(x)}`);
+    const month = this.state.months.find(m => m.days.some(d => d.uniqueKey === x.uniqueKey));
+    const monthIndex = this.state.months.findIndex(m => m.days.some(d => d.uniqueKey === x.uniqueKey));
+    console.log(month);
+
+    const day = month.days.find(d => d.uniqueKey === x.uniqueKey);
+  }
+
   /****************************************************************************
-  * State initiation
+  * State initiation and update
   ****************************************************************************/
   getMonthName = (monthNum) => {
     return moment().month(monthNum).format('MMM')
@@ -69,7 +79,6 @@ class App extends Component {
     return months.map((_, ind) => ({
       name: this.getMonthName(ind),
       days: shiftForViewYear(ind)(getForYear(ind).map(this.mapDay))
-      // days: getForYear(ind).map(this.mapDay)
     }));
   };
 
@@ -103,6 +112,7 @@ class App extends Component {
   }
 
   mapDay = (day) => ({
+    uniqueKey: `${day.date()}_${day.month()}_${day.year()}`,
     date: day.date(),
     tags: [{type: this.getRandomType()}]
   });

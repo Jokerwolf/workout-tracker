@@ -1,0 +1,16 @@
+.add-note-body {
+  padding: 5px 0;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form .form-control {
+
+}
+
+.add-note-footer {
+  padding: 5px 0;
+}

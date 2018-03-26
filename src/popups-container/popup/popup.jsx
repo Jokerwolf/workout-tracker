@@ -36,7 +36,7 @@ const Popup = (props: Props) => {
     return (
         <div className="popup">
             <div className="body-container">
-                <div className="header card-title">
+                <div className="header">
                     { getChild('header')}
                     <span className="close" onClick={() => props.close(props.popupKey)}>&times;</span>
                 </div>

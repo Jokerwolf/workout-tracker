@@ -7,7 +7,7 @@ import './month.css';
 
 type Props = {
     name: string;
-    days: Array<{ date: string }>;
+    days: Array<{ date: string, uniqueKey: string }>;
     showPopup: () => void;
 };
 
