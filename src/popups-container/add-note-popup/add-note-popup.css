@@ -1,16 +1,48 @@
 .add-note-body {
-  padding: 5px 0;
+  padding: 10px;
 }
 
-.form {
+.add-note-form {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 }
 
-.form .form-control {
+.add-note-form .row {
+  display: flex;
+}
 
+.add-note-form .form-control {
+  flex-basis: 90%;
+}
+
+.add-note-form .control-label {
+  flex-basis: 10%;
+  margin-right: 10px;
 }
 
 .add-note-footer {
   padding: 5px 0;
+}
+
+.add-note-footer > button {
+  margin: 0 5px;
+}
+
+#add-note-description {
+  height: 250px;
+  resize: none;
+}
+
+.add-note-form .left,
+.add-note-form .right {
+  display: flex;
+}
+
+.add-note-form .left {
+  flex-basis: 80%;
+  margin-right: 10px;
+}
+
+.add-note-form .right {
+  flex-basis: 20%;
 }
