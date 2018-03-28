@@ -1,3 +1,4 @@
+//@flow
 import React, { Component } from 'react';
 import * as moment from 'moment';
 
@@ -7,25 +8,35 @@ import { PopupsContainer } from './popups-container';
 import logo from './logo.svg';
 import './App.css';
 
-class App extends Component {
-  constructor(props) {
+type Props = {};
+type State = {
+  months: Array<any>;
+  year: number;
+  activePopupModel: any,
+  show: boolean;
+};
+
+class App extends Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     const year = 2018;
 
     this.state = {
       year,
       months: this.getMonths(year),
-      openUniqueKey: undefined,
+      activePopupModel: undefined,
+      show: false
     };
   }
 
   render() {
+    const { show, year, activePopupModel } = this.state;
     return (
       <div className="App">
-        <PopupsContainer show={this.state.show} close={() => this.closePopup()} save={(x) => this.save(x)} model={{uniqueKey: this.state.openUniqueKey}}/>
+        <PopupsContainer show={show} close={() => this.closePopup()} save={(x) => this.save(x)} model={activePopupModel}/>
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">{this.state.year}</h1>
+          <h1 className="App-title">{year}</h1>
         </header>
         <div className="body">
           <button className="prev-button" onClick={() => this.goBack()}>Prev</button>
@@ -36,8 +47,8 @@ class App extends Component {
     );
   }
 
-  showPopup(model: {uniqueKey: string}) {
-    this.setState({show: true, openUniqueKey: model.uniqueKey})
+  showPopup(model: { uniqueKey: string }) {
+    this.setState({show: true, activePopupModel: model.uniqueKey})
   }
 
   closePopup() {
@@ -57,21 +68,21 @@ class App extends Component {
 
   save(x) {
     console.log(`X: ${JSON.stringify(x)}`);
-    const month = this.state.months.find(m => m.days.some(d => d.uniqueKey === x.uniqueKey));
-    const monthIndex = this.state.months.findIndex(m => m.days.some(d => d.uniqueKey === x.uniqueKey));
-    console.log(month);
-
-    const day = month.days.find(d => d.uniqueKey === x.uniqueKey);
+    // const month = this.state.months.find(m => m.days.some(d => d.uniqueKey === x.uniqueKey));
+    // const monthIndex = this.state.months.findIndex(m => m.days.some(d => d.uniqueKey === x.uniqueKey));
+    // console.log(month);
+    //
+    // const day = month.days.find(d => d.uniqueKey === x.uniqueKey);
   }
 
   /****************************************************************************
   * State initiation and update
   ****************************************************************************/
-  getMonthName = (monthNum) => {
+  getMonthName = (monthNum: number) => {
     return moment().month(monthNum).format('MMM')
   };
 
-  getMonths = (year) => {
+  getMonths = (year: number) => {
     const months = new Array(12).fill(1);
     const getForYear = this.getMonthDays(year);
     const shiftForViewYear = this.shiftForView(year);
@@ -82,7 +93,7 @@ class App extends Component {
     }));
   };
 
-  shiftForView = (year) => (monthNum) => (days) => {
+  shiftForView = (year: number) => (monthNum: number) => (days: Array<any>) => {
     const totalCells = 42; // 6 rows of 7 days
 
     const month = moment().year(year).month(monthNum);
@@ -97,7 +108,7 @@ class App extends Component {
       .concat(new Array(postfix).fill({}));
   }
 
-  getMonthDays = (year) => (monthNum) => {
+  getMonthDays = (year: number) => (monthNum: number) => {
     const month = moment().year(year).month(monthNum);
 
     const start = month.clone().startOf('month');
@@ -111,7 +122,7 @@ class App extends Component {
     return days;
   }
 
-  mapDay = (day) => ({
+  mapDay = (day: any) => ({
     uniqueKey: `${day.date()}_${day.month()}_${day.year()}`,
     date: day.date(),
     tags: [{type: this.getRandomType()}]
@@ -123,7 +134,7 @@ class App extends Component {
     return integer > 3 ? undefined : integer;
   };
 
-  getRandomInt = (max) =>
+  getRandomInt = (max: number) =>
     Math.floor(Math.random() * Math.floor(max));
 }
 

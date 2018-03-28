@@ -5,10 +5,14 @@ import { AddNotePopup } from './add-note-popup';
 
 import './popups-container.css';
 
+/******************************************************************************
+* Types
+******************************************************************************/
+type AddNotePopupModel = { uniqueKey: string };
+
 type Props = {
-  model: {uniqueKey: string},
+  model: AddNotePopupModel,
   show: boolean;
-  close: () => void;
 };
 
 const PopupsContainer = (props: Props) => (

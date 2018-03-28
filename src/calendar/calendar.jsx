@@ -5,9 +5,15 @@ import { Month } from './month';
 
 import './calendar.css';
 
+/******************************************************************************
+* Types
+******************************************************************************/
+type DayType = { date: string, uniqueKey: string };
+type MonthType = { name: string, days: Array<DayType> };
+
 type Props = {
-    months: Array<{name: string}>;
-    showPopup: () => void;
+    months: Array<MonthType>;
+    showPopup: Function;
 };
 
 const Calendar = (props: Props) => (

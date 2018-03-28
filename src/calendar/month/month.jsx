@@ -5,10 +5,15 @@ import { Day } from '../day';
 
 import './month.css';
 
+/******************************************************************************
+* Types
+******************************************************************************/
+type TagType = { type: number };
+type DayType = { date: string, uniqueKey: string, tags: Array<TagType> };
 type Props = {
     name: string;
-    days: Array<{ date: string, uniqueKey: string }>;
-    showPopup: () => void;
+    days: Array<DayType>;
+    showPopup: Function;
 };
 
 const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];

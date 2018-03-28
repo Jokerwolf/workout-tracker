@@ -3,14 +3,18 @@ import React from 'react';
 
 import './day.css';
 
+/******************************************************************************
+* Types
+******************************************************************************/
+type TagType = { type: number };
 type Props = {
   uniqueKey: string,
   date: string;
-  tags: Array<{ type: number; }>;
-  showPopup: ({uniqueKey: string}) => void;
-
+  tags: Array<TagType>;
+  showPopup: Function;
 };
-const types = ['legs','arms','chest','back'];
+
+const types = ['legs', 'arms', 'chest', 'back'];
 
 const Day = (props: Props) => {
   const emptyDay = props.date === undefined || props.date === null || props.date === '';
@@ -22,7 +26,7 @@ const Day = (props: Props) => {
   }
 };
 
-function getClass(tags: Array<{ type: number }>, emptyDay: boolean) {
+function getClass(tags: Array<TagType>, emptyDay: boolean) {
   return (tags || [])
     .map(tag => types[tag.type])
     .filter(x => x)
