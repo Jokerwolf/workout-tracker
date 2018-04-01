@@ -67,7 +67,7 @@ class App extends Component<Props, State> {
       <div className="App">
         <PopupsContainer show={popupVisible}
             onClose={(popupKey) => this.closePopup(popupKey)}
-            onSave={(x) => this.saveNote(x)}
+            onSave={(popupKey, model) => this.saveNote(popupKey, model)}
             model={activePopupModel}
         />
         <header className="App-header">
@@ -100,9 +100,7 @@ class App extends Component<Props, State> {
           </div>
         </header>
         <div className="body">
-          {/* <button className="prev-button" onClick={() => this.goBack()}>Prev</button> */}
           <Calendar months={months.flatMonths} onShowPopup={(popupKey, x) => this.showPopup(popupKey, x)}/>
-          {/* <button className="next-button" onClick={() => this.goForward()}>Next</button> */}
         </div>
       </div>
     );
@@ -138,7 +136,7 @@ class App extends Component<Props, State> {
     this.setState({year, months});
   }
 
-  saveNote(note: NoteTp) {
+  saveNote(popupKey: string, note: NoteTp) {
     const month = this.state.months[note.uniqueKey.monthKey];
     const day = month.days[note.uniqueKey.dayKey];
 
@@ -157,6 +155,8 @@ class App extends Component<Props, State> {
     newMonths.flatMonths = newFlatMonth;
 
     this.setState({months: newMonths});
+
+    this.closePopup(popupKey);
   }
 
   /****************************************************************************

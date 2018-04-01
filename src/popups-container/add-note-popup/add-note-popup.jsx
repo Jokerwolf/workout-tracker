@@ -15,7 +15,7 @@ import './add-note-popup.css';
 type Props = {
   model: AddNotePopupModelTp,
   onClose: (popupKey: string) => void;
-  onSave: (x: any) => void;
+  onSave: (popupKey: string, x: any) => void;
 };
 
 type State = {
@@ -70,7 +70,7 @@ class AddNotePopup extends Component<Props, State> {
           </div>
           <div key="footer" className="add-note-footer">
             <Button clickHandler={() => onClose(AddNotePopupKey)}>Cancel</Button>
-            <Button clickHandler={() => onSave(this.constructNote())}>Save</Button>
+            <Button clickHandler={() => onSave(AddNotePopupKey, this.constructNote())}>Save</Button>
           </div>
       </Popup>
     )}
