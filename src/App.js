@@ -13,6 +13,7 @@ import type {
 } from './shared/types';
 
 import logo from './logo.svg';
+
 import './App.css';
 
 /****************************************************************************
@@ -71,12 +72,37 @@ class App extends Component<Props, State> {
         />
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">{year}</h1>
+
+          <div className="year-panel">
+            <div className="navigation-button left" onClick={() => this.goBack()}>
+              <svg version="1.1" id="triangle-prev" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+              	viewBox="0 0 50 50" enableBackground="new 0 0 50 50">
+              		<polygon className="triangle-polygon"
+                    fill="#FFFFFF" stroke="#FFFFFF"
+                    strokeMiterlimit="10"
+                    points="3.6,44.5 25.3,7 46.9,44.5"
+                  />
+              </svg>
+            </div>
+
+            <h1 className="App-title">{year}</h1>
+
+            <div className="navigation-button right" onClick={() => this.goForward()}>
+              <svg version="1.1" id="triangle-next" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+              	viewBox="0 0 50 50" enableBackground="new 0 0 50 50">
+              		<polygon className="triangle-polygon"
+                    fill="#FFFFFF" stroke="#FFFFFF"
+                    strokeMiterlimit="10"
+                    points="3.6,44.5 25.3,7 46.9,44.5"
+                  />
+              </svg>
+            </div>
+          </div>
         </header>
         <div className="body">
-          <button className="prev-button" onClick={() => this.goBack()}>Prev</button>
+          {/* <button className="prev-button" onClick={() => this.goBack()}>Prev</button> */}
           <Calendar months={months.flatMonths} onShowPopup={(popupKey, x) => this.showPopup(popupKey, x)}/>
-          <button className="next-button" onClick={() => this.goForward()}>Next</button>
+          {/* <button className="next-button" onClick={() => this.goForward()}>Next</button> */}
         </div>
       </div>
     );
@@ -196,8 +222,7 @@ class App extends Component<Props, State> {
   }
 
   mapDay = (day: any): DayTp => ({
-    date: day.date(),
-    tags: this.getRandomTags()
+    date: day.date()
   });
 
   getRandomTags = (): Array<TagTp> | void => {
