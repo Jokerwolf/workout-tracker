@@ -1,12 +1,38 @@
 //@flow
-import React from 'react';
+import * as React from 'react';
 
 import './popup.css';
 
+/****************************************************************************
+* Types
+****************************************************************************/
 type Props = {
-    close: (key: string) => void,
-    children: any,
+    onClose: (key: string) => void,
     popupKey: string;
+    children: React.Node
+}
+
+/****************************************************************************
+* Component
+****************************************************************************/
+
+const Popup = (props: Props) => {
+    const getChild = getChildComponent(props.children);
+
+    return (
+        <div className="popup">
+            <div className="body-container">
+                <div className="header">
+                    { getChild('header')}
+                    <span className="close" onClick={() => props.onClose(props.popupKey)}>&times;</span>
+                </div>
+                { getChild('body') }
+            </div>
+            <div className="footer">
+                { getChild('footer') }
+            </div>
+        </div>
+    );
 };
 
 const getChildComponent = (children) => (key) => {
@@ -29,24 +55,5 @@ const getChildComponent = (children) => (key) => {
         return child;
     }
 }
-
-const Popup = (props: Props) => {
-    const getChild = getChildComponent(props.children);
-
-    return (
-        <div className="popup">
-            <div className="body-container">
-                <div className="header">
-                    { getChild('header')}
-                    <span className="close" onClick={() => props.close(props.popupKey)}>&times;</span>
-                </div>
-                { getChild('body') }
-            </div>
-            <div className="footer">
-                { getChild('footer') }
-            </div>
-        </div>
-    );
-};
 
 export { Popup };

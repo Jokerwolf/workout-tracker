@@ -1,10 +1,11 @@
 //@flow
-import React from 'react';
+import * as React from 'react';
 
 import './button.css';
 
 type Props = {
-  clickHandler: (any) => any
+  clickHandler: (any) => any,
+  children: React.Node
 };
 
 const Button = (props: Props) => {

@@ -8,18 +8,30 @@ import './calendar.css';
 /******************************************************************************
 * Types
 ******************************************************************************/
-type DayType = { date: string, uniqueKey: string };
-type MonthType = { name: string, days: Array<DayType> };
-
 type Props = {
-    months: Array<MonthType>;
-    showPopup: Function;
+    months: Array<Month>;
+    onShowPopup: Function;
 };
 
-const Calendar = (props: Props) => (
+/******************************************************************************
+* Component
+******************************************************************************/
+const Calendar = (props: Props) => {
+  const { months, onShowPopup } = props;
+
+  return (
     <div className="calendar">
-        {props.months.map((month, ind) => <Month key={ind} {...month} showPopup={props.showPopup}/>)}
+        {months.map((month) => {
+          return (
+            <Month key={month.name}
+              name={month.name}
+              days={month.days.flatDays} 
+              onShowPopup={onShowPopup}
+            />
+          )
+        })}
     </div>
-);
+  );
+};
 
 export { Calendar };

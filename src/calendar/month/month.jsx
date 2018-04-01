@@ -8,26 +8,41 @@ import './month.css';
 /******************************************************************************
 * Types
 ******************************************************************************/
-type TagType = { type: number };
-type DayType = { date: string, uniqueKey: string, tags: Array<TagType> };
 type Props = {
     name: string;
-    days: Array<DayType>;
-    showPopup: Function;
+    days: Array<Day>;
+    onShowPopup: Function;
 };
 
 const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
-const Month = (props: Props) => (
-    <div className="month">
-        <div className="name">{props.name}</div>
-        <div className="days-of-week">
-            {daysOfWeek.map((x, ind) => <div key={ind} className="day-of-week">{x}</div>)}
-        </div>
-        <div className="days">
-            {props.days.map((day, ind) => <Day key={ind} {...day} showPopup={props.showPopup}/>)}
-        </div>
-    </div>
-);
+/******************************************************************************
+* Component
+******************************************************************************/
+const Month = (props: Props) => {
+  const { days, name, onShowPopup } = props;
+
+  const handleShowPopup = (popupKey: string, rest: any) => {
+    return onShowPopup(popupKey, { monthKey: name, ...rest });
+  };
+
+  return (
+      <div className="month">
+          <div className="name">{name}</div>
+          <div className="days-of-week">
+              {daysOfWeek.map((x, ind) => <div key={`dow_${ind}`} className="day-of-week">{x}</div>)}
+          </div>
+          <div className="days">
+              {days.map((day, ind) => (
+                <Day
+                  key={ind}
+                  {...day}
+                  onShowPopup={(popupKey, dayKey) => handleShowPopup(popupKey, dayKey)}
+                />
+              ))}
+          </div>
+      </div>
+  );
+}
 
 export { Month };
