@@ -28,14 +28,15 @@ type NoteTp = {
   description: string,
   type: number;
 };
-
+type NotesTp = {
+  [key: string]: Array<NoteTp>
+};
 type State = {
   months: MonthsTp,
   year: number,
   activePopupModel?: AddNotePopupModelTp,
   popupVisible: boolean,
-  notes?: Array<NoteTp>
-
+  notes: ?NotesTp
 };
 
 type Props = {};
@@ -57,7 +58,8 @@ class App extends Component<Props, State> {
       year,
       months,
       activePopupModel: undefined,
-      popupVisible: false
+      popupVisible: false,
+      notes: undefined
     };
   }
 
@@ -107,12 +109,10 @@ class App extends Component<Props, State> {
   }
 
   showPopup(popupKey: string, model: AddNotePopupModelTp) {
-    console.log(`Popup ${popupKey} wants to be opened`);
     this.setState({popupVisible: true, activePopupModel: model})
   }
 
   closePopup(popupKey: string) {
-    console.log(`Popup ${popupKey} wants to be closed`);
     this.setState({popupVisible: false, activePopupModel: undefined})
   }
 
@@ -121,7 +121,7 @@ class App extends Component<Props, State> {
 
     const flatMonths = this.getMonths(year);
     const indexedMonths = this.indexArray(flatMonths, (x) => x.name) || {}
-    const months = {flatMonths, ...indexedMonths};
+    const months = { flatMonths, ...indexedMonths };
 
     this.setState({year, months});
   }
@@ -131,7 +131,7 @@ class App extends Component<Props, State> {
 
     const flatMonths = this.getMonths(year);
     const indexedMonths = this.indexArray(flatMonths, (x) => x.name) || {}
-    const months = {flatMonths, ...indexedMonths};
+    const months = { flatMonths, ...indexedMonths };
 
     this.setState({year, months});
   }
@@ -154,7 +154,11 @@ class App extends Component<Props, State> {
     const newFlatMonth: Array<MonthTp> = this.flatObject(indexedMonths) || [];
     newMonths.flatMonths = newFlatMonth;
 
-    this.setState({months: newMonths});
+    const uniqueKey = this.uniqueKeyConstructor((this.state || {}).year, note.uniqueKey.monthKey, note.uniqueKey.dayKey);
+    const byKeyNotes = (this.state.notes || {})[uniqueKey] || [];
+    const newByKeyNotes = [...byKeyNotes, note];
+    const newNotes = Object.assign({}, this.state.notes, {[uniqueKey]: newByKeyNotes});
+    this.setState({months: newMonths, notes: newNotes});
 
     this.closePopup(popupKey);
   }
@@ -162,6 +166,8 @@ class App extends Component<Props, State> {
   /****************************************************************************
   * State initiation and update
   ****************************************************************************/
+  uniqueKeyConstructor = (year: number, monthKey: number | string, dayKey: number | string) => `${year}_${monthKey}_${dayKey}`;
+
   getMonthName = (monthNum: number): string =>
     moment().month(monthNum).format('MMM');
 
@@ -169,9 +175,15 @@ class App extends Component<Props, State> {
     const months = new Array(12).fill(1);
     const getForYear = this.getMonthDays(year);
     const shiftForViewYear = this.shiftForView(year);
+    const getType = (month, date) => {
+      const uniqueKey = this.uniqueKeyConstructor(year, month, date);
+      const notes = ((this.state || {}).notes || {})[uniqueKey] || [];
+      return (notes[0] || {}).type;
+    };
 
     const getDays = (monthNum: number) => {
-      const flatDays = shiftForViewYear(monthNum)(getForYear(monthNum).map(this.mapDay));
+      const days = getForYear(monthNum).map((day) => this.mapDay(day, getType(this.getMonthName(monthNum), day.date())));
+      const flatDays = shiftForViewYear(monthNum)(days);
       const indexedDays = this.indexArray(
         flatDays,
         (x: DayTp | EmptyDayTp) => {
@@ -221,8 +233,9 @@ class App extends Component<Props, State> {
     return days;
   }
 
-  mapDay = (day: any): DayTp => ({
-    date: day.date()
+  mapDay = (day: any, type: number): DayTp => ({
+    date: day.date(),
+    tags: [{type}]
   });
 
   getRandomTags = (): Array<TagTp> | void => {

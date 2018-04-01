@@ -31,7 +31,7 @@ class AddNotePopup extends Component<Props, State> {
     super(props);
     this.state = {
       description: undefined,
-      type: undefined
+      type: 0
     };
   }
 
