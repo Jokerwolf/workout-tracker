@@ -10,15 +10,29 @@ import './popups-container.css';
 ******************************************************************************/
 type AddNotePopupModel = { uniqueKey: string };
 
-type Props = {
-  model: AddNotePopupModel,
-  show: boolean;
+const POPUPS = {
+  "ADD_TO_NOTE": AddNotePopup
 };
 
-const PopupsContainer = (props: Props) => (
-  <div className={`popups-container ${props.show ? 'show' : ''}`}>
-    <AddNotePopup {...props}/>
-  </div>
-);
+type Props = {
+  show: { [k: $Keys<typeof POPUPS>]: AddNotePopupModel };
+};
+
+const PopupsContainer = (props: Props) => {
+  debugger;
+  const { show } = props;
+  const showLayer = show && Object.keys(show).length > 0;
+
+  return (
+    <div className={`popups-container ${ showLayer ? 'show' : '' }`}>
+    {
+      Object.keys(show).map(key => {
+        const Popup = POPUPS[key];
+        return <Popup model={show[key]} {...props} />
+      })
+    }
+    {/* <AddNotePopup {...props}/> */}
+  </div>);
+};
 
 export { PopupsContainer };

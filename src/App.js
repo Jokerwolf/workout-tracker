@@ -35,7 +35,7 @@ type State = {
   months: MonthsTp,
   year: number,
   activePopupModel?: AddNotePopupModelTp,
-  popupVisible: boolean,
+  popupVisible: any,
   notes: ?NotesTp
 };
 
@@ -58,7 +58,7 @@ class App extends Component<Props, State> {
       year,
       months,
       activePopupModel: undefined,
-      popupVisible: false,
+      popupVisible: {},
       notes: undefined
     };
   }
@@ -109,11 +109,12 @@ class App extends Component<Props, State> {
   }
 
   showPopup(popupKey: string, model: AddNotePopupModelTp) {
-    this.setState({popupVisible: true, activePopupModel: model})
+    this.setState({popupVisible: {[popupKey]: model}, activePopupModel: model})
   }
 
   closePopup(popupKey: string) {
-    this.setState({popupVisible: false, activePopupModel: undefined})
+    delete this.state.popupVisible[popupKey];
+    this.setState({popupVisible: this.state.popupVisible, activePopupModel: undefined})
   }
 
   goBack() {
