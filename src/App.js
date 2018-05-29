@@ -9,7 +9,8 @@ import type {
   MonthsTp, MonthTp,
   DayTp, EmptyDayTp,
   TagTp,
-  AddNotePopupModelTp
+  VisiblePopupsTp,
+  NotesTp, NoteTp
 } from './shared/types';
 
 import logo from './logo.svg';
@@ -19,23 +20,10 @@ import './App.css';
 /****************************************************************************
 * Types
 ****************************************************************************/
-type UniqueKeyTp = {
-  dayKey: string,
-  monthKey: string;
-};
-type NoteTp = {
-  uniqueKey: UniqueKeyTp,
-  description: string,
-  type: number;
-};
-type NotesTp = {
-  [key: string]: Array<NoteTp>
-};
 type State = {
   months: MonthsTp,
   year: number,
-  activePopupModel?: AddNotePopupModelTp,
-  popupVisible: any,
+  visiblePopups: VisiblePopupsTp<*, *>,
   notes: ?NotesTp
 };
 
@@ -58,19 +46,18 @@ class App extends Component<Props, State> {
       year,
       months,
       activePopupModel: undefined,
-      popupVisible: {},
+      visiblePopups: {},
       notes: undefined
     };
   }
 
   render() {
-    const { popupVisible, year, activePopupModel, months } = this.state;
+    const { visiblePopups, year, months } = this.state;
     return (
       <div className="App">
-        <PopupsContainer show={popupVisible}
+        <PopupsContainer show={visiblePopups}
             onClose={(popupKey) => this.closePopup(popupKey)}
             onSave={(popupKey, model) => this.saveNote(popupKey, model)}
-            model={activePopupModel}
         />
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
@@ -108,13 +95,16 @@ class App extends Component<Props, State> {
     );
   }
 
-  showPopup(popupKey: string, model: AddNotePopupModelTp) {
-    this.setState({popupVisible: {[popupKey]: model}, activePopupModel: model})
+  showPopup(popupKey: string, model: {monthKey: number | string, dayKey: number | string}) {
+    console.log(JSON.stringify(model));
+    const uniqueKey = this.uniqueKeyConstructor((this.state || {}).year, model.monthKey, model.dayKey);
+
+    this.setState({visiblePopups: {[popupKey]: Object.assign({}, model, {notes: (this.state.notes || {})[uniqueKey]})}})
   }
 
   closePopup(popupKey: string) {
-    delete this.state.popupVisible[popupKey];
-    this.setState({popupVisible: this.state.popupVisible, activePopupModel: undefined})
+    delete this.state.visiblePopups[popupKey];
+    this.setState({visiblePopups: this.state.visiblePopups})
   }
 
   goBack() {
@@ -167,7 +157,8 @@ class App extends Component<Props, State> {
   /****************************************************************************
   * State initiation and update
   ****************************************************************************/
-  uniqueKeyConstructor = (year: number, monthKey: number | string, dayKey: number | string) => `${year}_${monthKey}_${dayKey}`;
+  uniqueKeyConstructor = (year: number, monthKey: number | string, dayKey: number | string) =>
+    `${year}_${monthKey}_${dayKey}`;
 
   getMonthName = (monthNum: number): string =>
     moment().month(monthNum).format('MMM');
@@ -246,7 +237,6 @@ class App extends Component<Props, State> {
 
   getRandomType = () => {
     const integer = this.getRandomInt(30);
-
     return integer > 3 ? undefined : integer;
   };
 

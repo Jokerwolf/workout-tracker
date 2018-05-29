@@ -45,4 +45,7 @@
 
 .add-note-form .right {
   flex-basis: 20%;
+  display: flex;
+  flex-flow: column;
+  align-items: start;
 }

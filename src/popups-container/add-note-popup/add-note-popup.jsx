@@ -54,17 +54,31 @@ class AddNotePopup extends Component<Props, State> {
               </div>
 
               <div className="right">
-                <label htmlFor="type" className="control-label">Type</label>
-                <select
-                  className="form-control"
-                  name="type"
-                  value={this.state.type}
-                  onChange={(event) => this.handleChange('type', event.target.value)}>
-                  <option value="0">Legs</option>
-                  <option value="1">Arms</option>
-                  <option value="2">Chest</option>
-                  <option value="3">Back</option>
-                </select>
+                <p>
+                  <label htmlFor="type" className="control-label">Type</label>
+                  <select
+                    className="form-control"
+                    name="type"
+                    value={this.state.type}
+                    onChange={(event) => this.handleChange('type', event.target.value)}>
+                    <option value="0">Legs</option>
+                    <option value="1">Arms</option>
+                    <option value="2">Chest</option>
+                    <option value="3">Back</option>
+                  </select>
+                </p>
+                <p>
+                  <label>Notes</label>
+                  <ul>
+                  {(model.notes || []).map((note, index) => (
+                    <li key={index}>
+                      {note.description}
+                      <br />
+                      {note.type}
+                    </li>
+                  ))}
+                  </ul>
+                </p>
               </div>
             </form>
           </div>
